@@ -15,6 +15,8 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './employee-component.css'
 })
 export class EmployeeComponent implements OnInit {
+  searchTerm: string = '';
+ filteredEmployees: any[] = [];
 
   employees: EmployeeDTO[] = [];
   selectedEmployee: EmployeeDTO | null = null;
@@ -114,7 +116,17 @@ constructor(
    loadEmployees(): void {
     this.employeeService.getAllEmployees(this.idClient).subscribe(data => {
       this.employees = data;
+      this.filteredEmployees = data;
     });
+  }
+
+   filterEmployees() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredEmployees = this.employees.filter(emp =>
+      emp.employeeName?.toLowerCase().includes(term) ||
+      emp.departmentName?.toLowerCase().includes(term) ||
+      emp.designation?.toLowerCase().includes(term)
+    );
   }
 
  loadDropdownData(): void {
@@ -184,6 +196,9 @@ constructor(
   }
 
 selectEmployee(employeeId: number): void {
+  this.isEditing = false;
+  this.isCreating = false;
+  
   this.employeeService.getEmployeeById(this.idClient, employeeId).subscribe({
     next: (employee) => {
       this.isEditMode = true;
@@ -232,7 +247,7 @@ selectEmployee(employeeId: number): void {
         createdBy: employee.createdBy,
         profileImage: null
       });
-      this.employeeForm.disable();
+
       this.isEditMode = true;
       this.clearFormArrays();
 
@@ -251,7 +266,9 @@ selectEmployee(employeeId: number): void {
           createdBy: [doc.createdBy]
         });
         this.documents.push(docGroup);
+        
       });
+ 
 
      employee.educationInfos.forEach(edu => {
       const eduGroup = this.fb.group({
@@ -279,6 +296,7 @@ selectEmployee(employeeId: number): void {
       this.educationInfos.push(eduGroup);
     });
 
+
     employee.familyInfos.forEach(fam => {
       const famGroup = this.fb.group({
         id: [fam.id],
@@ -299,6 +317,7 @@ selectEmployee(employeeId: number): void {
       this.familyInfos.push(famGroup);
     });
 
+
    employee.certifications.forEach(cert => {
    const certGroup = this.fb.group({
     id: [cert.id],
@@ -313,11 +332,14 @@ selectEmployee(employeeId: number): void {
     createdBy: [cert.createdBy]
   });
   this.certifications.push(certGroup);
-});
-    },
-    error: (err) => {
-      console.error('Failed to load employee', err);
-    }
+  });
+
+  this.employeeForm.disable({ emitEvent: false });
+},
+
+error: (err) => {
+  console.error('Failed to load employee', err);
+}
   });
 }
 
@@ -503,28 +525,10 @@ clearFormArrays(): void {
  
 createEmployee(): void {
   if (this.employeeForm.invalid) {
-    //this.markFormGroupTouched(this.employeeForm);
     return;
   }
 
   const formData = this.employeeForm.getRawValue() as EmployeeCreateDTO;
-
-  // formData.educationInfos = formData.educationInfos.filter(e =>
-  //   e.idEducationLevel && e.idEducationExamination && e.idEducationResult && e.major && e.passingYear && e.instituteName
-  // );
-
-  // formData.certifications = formData.certifications.filter(c =>
-  //   c.certificationTitle && c.certificationInstitute && c.instituteLocation && c.fromDate
-  // );
-
-  // formData.familyInfos = formData.familyInfos.filter(f =>
-  //   f.name && f.idGender && f.idRelationship
-  // );
-
-  // formData.documents = formData.documents.filter(d =>
-  //   d.documentName && d.fileName && d.uploadDate
-  // );
-
   this.employeeService.createEmployee(formData).subscribe({
     next: () => {
       this.loadEmployees();
@@ -538,8 +542,6 @@ createEmployee(): void {
     }
   });
 }
-
-
 
   updateEmployee(): void {
     if (this.employeeForm.invalid) return;
