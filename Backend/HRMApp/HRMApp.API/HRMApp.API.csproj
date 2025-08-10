@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HRMApp.Application\HRMApp.Application.csproj" />
+    <ProjectReference Include="..\HRMApp.Infrastructure\HRMApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\HRMApp.Persistence\HRMApp.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

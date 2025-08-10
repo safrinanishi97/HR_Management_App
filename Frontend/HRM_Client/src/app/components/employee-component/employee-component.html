@@ -1,0 +1,643 @@
+<div class="container-fluid h-100">
+  <div class="row h-100">
+  
+   <div class="col-md-2 p-0 border-end" style="height: 100vh; overflow-y: auto;">
+      <div class="list-group">
+        <div class="list-group-item bg-secondary text-white border rounded py-4" 
+          style="position: sticky; top: 0; z-index: 1000;">
+          <h5 class="mb-0">Employee List</h5>
+        </div>
+        <div *ngFor="let emp of employees" 
+             class="list-group-item list-group-item-action border rounded mb-1"
+             [class.active]="selectedEmployee?.id === emp.id"
+             (click)="selectEmployee(emp.id)">
+          <div class="d-flex w-100 justify-content-between">
+            <h6 class="mb-1">{{ emp.id }} - {{ emp.employeeName }}</h6>
+          </div>
+          <small class="text-muted">{{ emp.departmentName }} - {{ emp.designation }}</small>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-10 p-3" style="height: 100vh; overflow-y: auto;">
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{isEditMode ? 'Edit Employee' : 'Create New Employee'}}</h5>
+          <div>
+              <button class="btn btn-outline-primary me-2"
+            *ngIf="!isEditMode && !isEditing && !isCreating"
+            (click)="startCreateMode()">
+              Create
+            </button>
+         <button type="submit" class="btn btn-outline-success me-2"
+            *ngIf="isCreating && !isEditing && !isEditMode"
+            [disabled]="!employeeForm.valid"
+            (click)="createEmployee()">
+            Save
+          </button>
+           <button class="btn btn-outline-warning me-2"
+            *ngIf="isEditMode && !isEditing"
+            (click)="enableFormEditing()">
+              Update
+            </button>
+           <button class="btn btn-outline-success me-2"
+            *ngIf="isEditMode && isEditing"
+            [disabled]="!employeeForm.valid || !employeeForm.enabled"
+            (click)="updateEmployee()">
+            Save Changes
+          </button>
+           
+             <button class="btn btn-outline-danger me-2"
+            *ngIf="isEditMode && !isEditing"
+            (click)="deleteEmployee()">
+              Delete
+            </button>
+            <button class="btn btn-outline-secondary"
+            *ngIf="isCreating || isEditing"
+            (click)="resetForm()">
+            Reset
+          </button>
+        
+          </div>
+        </div>
+        
+      <div class="card-body">
+        <form [formGroup]="employeeForm">
+          
+          <div class="row mb-3">  
+                <div class="col">
+                  <label class="form-label">Employee Name</label>
+                  <input type="text" class="form-control" formControlName="employeeName">
+                  <div *ngIf="employeeForm.get('employeeName')?.errors" class="text-danger">
+                    Employee Name is required.
+                  </div>
+                </div>
+                  <div class="col">
+                  <label class="form-label">Employee Name (Bangla)</label>
+                  <input type="text" class="form-control" formControlName="employeeNameBangla">
+                </div>
+                <div class="col">
+                  <label class="form-label">Father's Name</label>
+                  <input type="text" class="form-control" formControlName="fatherName">
+                </div>
+                <div class="col">
+                  <label class="form-label">Mother's Name</label>
+                  <input type="text" class="form-control" formControlName="motherName">
+                </div>
+                 <div class="col">
+                  <label class="form-label">Date Of Birth</label>
+                  <input type="date" class="form-control" formControlName="birthDate">
+                </div>
+             </div>
+
+
+            <div class="row mb-3">  
+              <div class="col">
+                  <label class="form-label">Joining Date</label>
+                  <input type="date" class="form-control" formControlName="joiningDate">
+                </div>
+                 <div class="col">
+                  <label class="form-label">Department</label>
+                  <select class="form-select" formControlName="idDepartment">
+                     
+                    <option value="null">Select Department</option>
+                    <option *ngFor="let dept of departments" [value]="dept.id">
+                      {{dept.text}}
+                    </option>
+                  </select>
+                   <div *ngIf="employeeForm.get('idDepartment')?.errors" class="text-danger">
+                    Department is required.
+                  </div>
+                </div> 
+                <div class="col">
+                  <label class="form-label">Designation</label>
+                  <select class="form-select" formControlName="idDesignation">
+                    <option value="null">Select Designation</option>
+                    <option *ngFor="let des of designations" [value]="des.id">
+                      {{des.text}}
+                    </option>
+                  </select>
+                </div>
+                 <div class="col">
+                  <label class="form-label">Section</label>
+                  <select class="form-select" formControlName="idSection">
+                    <option value="null">Select Section</option>
+                    <option *ngFor="let sec of sections" [value]="sec.id">
+                      {{sec.text}}
+                    </option>
+                  </select>
+                   <div *ngIf="employeeForm.get('idSection')?.errors" class="text-danger">
+                    Section is required.
+                  </div>
+                </div>
+
+                 <div class="col">
+                  <label class="form-label">Gender</label>
+                  <select class="form-select" formControlName="idGender">
+                    <option value="null">Select Gender</option>
+                    <option *ngFor="let gen of genders" [value]="gen.id">
+                      {{gen.text}}
+                    </option>
+                  </select>
+                </div>
+
+            </div>
+              
+
+             <div class="row mb-3"> 
+               <div class="col">
+                  <label class="form-label">Job Type</label>
+                  <select class="form-select" formControlName="idJobType">
+                    <option value="null" selected>Select Job Type</option>
+                    <option *ngFor="let job of jobTypes" [value]="job.id">
+                      {{job.text}}
+                    </option>
+                  </select>
+                </div>
+                 <div class="col">
+                  <label class="form-label">Employee Type</label>
+                  <select class="form-select" formControlName="idEmployeeType">
+                    <option value="null" selected>Select Employee Type</option>
+                    <option *ngFor="let empType of employeeTypes" [value]="empType.id">
+                      {{empType.text}}
+                    </option>
+                  </select>
+                </div>
+
+                  <div class="col">
+                  <label class="form-label">NID No.</label>
+                  <input type="text" class="form-control" formControlName="nationalIdentificationNumber">
+                </div>
+                <div class="col">
+                  <label class="form-label">Contact No</label>
+                  <input type="text" class="form-control" formControlName="contactNo">
+                </div>
+               <div class="col">
+                  <label class="form-label">Marital Status</label>
+                  <select class="form-select" formControlName="idMaritalStatus">
+                    <option value="null">Select Marital Status</option>
+                    <option *ngFor="let mari of maritalStatus" [value]="mari.id">
+                      {{mari.text}}
+                    </option>
+                  </select>
+                </div>    
+             </div>
+              
+
+            <div class="row mb-3"> 
+                <div class="col">
+                  <label class="form-label">Religion</label>
+                  <select class="form-select" formControlName="idReligion">
+                    <option value="null">Select Religion</option>
+                    <option *ngFor="let rel of religions" [value]="rel.id">
+                      {{rel.text}}
+                    </option>
+                  </select>
+                </div>
+
+
+                <div class="col">
+                  <label class="form-label">Permanent Address</label>
+                  <input type="text" class="form-control" formControlName="address">
+                </div>
+
+                <div class="col">
+                  <label class="form-label">Present Address</label>
+                  <input type="text" class="form-control" formControlName="presentAddress">
+                </div>
+
+
+                 <div class="col">
+                  <label class="form-label">Weeks Off Day</label>
+                  <select class="form-select" formControlName="idWeekOff">
+                    <option value="null">Select Weeks Off Day</option>
+                    <option *ngFor="let week of weekOffs" [value]="week.id">
+                      {{week.text}}
+                    </option>
+                  </select>
+                </div>
+               <div class="col">
+                <label>Active?</label>
+                <div class="d-flex">
+                  <div class="form-check me-3">
+                    <input class="form-check-input" 
+                          type="radio" 
+                          id="isActiveYes"
+                          [value]="true"
+                          formControlName="isActive">
+                    <label class="form-check-label" for="isActiveYes">Yes</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" 
+                          type="radio" 
+                          id="isActiveNo"
+                          [value]="false"
+                          formControlName="isActive">
+                    <label class="form-check-label" for="isActiveNo">No</label>
+                  </div>
+                </div>  
+              </div>
+               
+             </div>
+              
+
+          <div class="row mb-3"> 
+              <div class="col">
+                <label>Has Overtime?</label>
+                <div class="d-flex">
+                  <div class="form-check me-3">
+                    <input class="form-check-input" 
+                          type="radio" 
+                          id="hasOvertimeYes"
+                          [value]="true"
+                          formControlName="hasOvertime">
+                    <label class="form-check-label" for="hasOvertimeYes">Yes</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" 
+                          type="radio" 
+                          id="hasOvertimeNo"
+                          [value]="false"
+                          formControlName="hasOvertime">
+                    <label class="form-check-label" for="hasOvertimeNo">No</label>
+                  </div>
+                </div>  
+              </div>
+
+              <div class="col">
+                <label>Has Attendance Bonus?</label>
+                <div class="d-flex">
+                  <div class="form-check me-3">
+                    <input class="form-check-input" 
+                          type="radio" 
+                          id="hasAttendenceBonusYes"
+                          [value]="true"
+                          formControlName="hasAttendenceBonus">
+                    <label class="form-check-label" for="hasAttendenceBonusYes">Yes</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" 
+                          type="radio" 
+                          id="hasAttendenceBonusNo"
+                          [value]="false"
+                          formControlName="hasAttendenceBonus">
+                    <label class="form-check-label" for="hasAttendenceBonusNo">No</label>
+                  </div>
+                </div>  
+              </div>
+
+                <div class="col">
+                 <div class="text-center">
+                   <img [src]="profileImageUrl" 
+                        class="img-thumbnail mb-2" 
+                        style="width: 120px; height: 120px; object-fit: cover;">
+                      <input type="file" class="form-control" 
+                          (change)="onProfileImageChange($event)" 
+                          accept="image/*">
+                    </div>
+                  </div>
+
+             </div>
+
+
+             <div class="row mt-4">
+              
+               <div class="col-md-6 mb-3">          
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h6 class="mb-0">Professional Certifications</h6>
+                      <button type="button" class="btn btn-sm btn-outline-success" (click)="addCertification()">
+                        <i class="bi bi-plus"></i> Add
+                      </button>
+                    </div>
+                    <div class="card-body p-0">
+                      <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                          <thead>
+                            <tr>
+                              <th>Title</th>
+                              <th>Institute</th>
+                              <th>Location</th>
+                              <th>FromDate</th>
+                              <th>ToDate</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody formArrayName="certifications">
+                            <tr *ngFor="let cert of certifications.controls; let i = index" [formGroupName]="i">
+                            <td>
+                              <input type="text" class="form-control form-control-sm" formControlName="certificationTitle" >
+                                <small *ngIf="cert.get('certificationTitle')?.errors" class="text-danger">
+                                Title is required.
+                              </small>
+                            </td>
+                            <td>
+                              <input type="text" class="form-control form-control-sm" formControlName="certificationInstitute">
+                                <small *ngIf="cert.get('certificationInstitute')?.errors" class="text-danger">
+                              Institute is required.
+                            </small>
+                            </td>
+                            <td>
+                              <input type="text" class="form-control form-control-sm" formControlName="instituteLocation">
+                              <small *ngIf="cert.get('instituteLocation')?.errors" class="text-danger">
+                                Location is required.
+                              </small>
+                            </td>
+                            <td>
+                            <input type="date" 
+                                  class="form-control form-control-sm" 
+                                  formControlName="fromDate">
+                             <small *ngIf="cert.get('fromDate')?.errors" class="text-danger">
+                                From Date is required.
+                             </small>
+                            </td>
+                            <td>
+                            <input type="date" class="form-control form-control-sm" formControlName="toDate">
+                            </td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-danger" (click)="removeCertification(i)">
+                                <i class="bi bi-trash">Remove</i>
+                              </button>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>              
+                </div>
+                 <div class="col-md-6 mb-3">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h6 class="mb-0">Documents</h6>
+                      <button type="button" class="btn btn-sm btn-outline-success" (click)="addDocument()">
+                        <i class="bi bi-plus"></i> Add
+                      </button>
+                    </div>
+                    <div class="card-body p-0">
+                      <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                          <thead>
+                            <tr>
+                              <th>Document Name</th>
+                              <th>File</th>
+                              <th>File Name</th>
+                              <th>Date</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody formArrayName="documents">
+                          <tr *ngFor="let doc of documents.controls; let i = index" [formGroupName]="i">
+                            <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="documentName">
+                          <small *ngIf="doc.get('documentName')?.errors" class="text-danger">
+                            Document Name is required.
+                          </small>
+                            </td>
+
+                             <td>
+                            <label class="file-upload-label">
+                              <small class="btn btn-sm btn-outline-primary">{{ doc.get('fileName')?.value || 'No file chosen' }}</small>
+                              <input type="file" (change)="onDocumentFileChange($event, i)" style="display: none;">
+                            </label>
+                            
+                            <!-- <img *ngIf="doc.get('fileBase64')?.value"
+                                [src]="getDocumentPreviewUrl(doc.value)"
+                                class="img-thumbnail"
+                                style="max-width: 80px; max-height: 80px;" /> -->
+                          </td>
+                             <td>
+                            <input type="text" class="form-control form-control-sm" formControlName="fileName">
+                            <small *ngIf="doc.get('fileName')?.errors" class="text-danger">
+                              File Name is required.
+                            </small>
+                            </td>
+                           
+                            
+                            <td>
+                            <input type="date" class="form-control form-control-sm" formControlName="uploadDate">
+                            <small *ngIf="doc.get('uploadDate')?.errors" class="text-danger">
+                              Upload Date is required.
+                            </small>
+                            </td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-danger" (click)="removeDocument(i)">
+                                <i class="bi bi-trash">Remove</i>
+                              </button>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+       
+               <div class="row">
+                    <div class="col-md-12 mb-3">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h6 class="mb-0">Family Information</h6>
+                      <button type="button" class="btn btn-sm btn-outline-success" (click)="addFamilyInfo()">
+                        <i class="bi bi-plus"></i> Add
+                      </button>
+                    </div>
+                    <div class="card-body p-0">
+                      <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Gender</th>
+                              <th>Relationship</th>
+                              <th>Date of Birth </th>
+                              <th>Contact No</th>
+                              <th>Current Address</th>
+                              <th>Permanent Address</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody formArrayName="familyInfos">
+                           <tr *ngFor="let fam of familyInfos.controls; let i = index" [formGroupName]="i" >
+                            <td>
+                              <input type="text" class="form-control form-control-sm" formControlName="name">
+                               <small *ngIf="fam.get('name')?.errors" class="text-danger">
+                                  Name is required.
+                                </small>    
+                            </td>
+                            
+                             <td>
+                              <select class="form-select form-select-sm" formControlName="idGender">
+                                <option value="null">Select Gender</option>
+                                <option *ngFor="let gen of genders" [value]="gen.id">
+                                  {{gen.text}}
+                                </option>               
+                              </select>
+                              <small *ngIf="fam.get('idGender')?.errors" class="text-danger">
+                                Gender is required.
+                              </small>
+                              
+                            </td>
+                            <td>
+                              <select class="form-select form-select-sm" formControlName="idRelationship">
+                                <option value="null">Select Relationship</option>
+                                <option *ngFor="let rel of relationship" [value]="rel.id">
+                                  {{rel.text}}
+                                </option>               
+                              </select>
+                              
+                              <small *ngIf="fam.get('idRelationship')?.errors" class="text-danger">
+                                Relationship is required.
+                              </small>
+                            </td>
+                            <td>
+                              <input type="date" class="form-control form-control-sm" formControlName="dateOfBirth">
+                              <small *ngIf="fam.get('dateOfBirth')?.errors" class="text-danger">
+                                Date of Birth is required.
+                              </small>
+                              </td>
+                            <td>
+                              <input type="text" class="form-control form-control-sm" formControlName="contactNo">
+                            </td>
+                            <td>
+                              <input type="text" class="form-control form-control-sm" formControlName="currentAddress">
+                            </td>
+                            <td>
+                              <input type="text" class="form-control form-control-sm" formControlName="permanentAddress">
+                            <td>
+                              <button type="button" class="btn btn-sm btn-danger" (click)="removeFamilyInfo(i)">
+                                <i class="bi bi-trash">Remove</i>
+                              </button>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+               </div>
+
+              <div class="row">
+                 <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h6 class="mb-0">Education Information</h6>
+                      <button type="button" class="btn btn-sm btn-outline-success" (click)="addEducationInfo()">
+                        <i class="bi bi-plus"></i> Add
+                      </button>
+                    </div>
+                    <div class="card-body p-0">
+                      <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                          <thead>
+                            <tr>
+                              <th>Examination</th>
+                              <th>Level</th>
+                              <th>Results</th>
+                              <th>Institute</th>
+                              <th>Foreign Institute?</th>
+                              <th>Major</th>
+                              <th>CGPA</th>
+                              <th>Exam Scale</th>
+                              <th>Marks</th>
+                              <th>Passing Year</th>
+                              <th>Duration</th>
+                              <th>Achievement</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody formArrayName="educationInfos">
+                            <tr *ngFor="let edu of educationInfos.controls; let i = index" [formGroupName]="i">
+                             <td>
+                             <select class="form-control form-control-sm" formControlName="idEducationExamination">
+                                <option value="null">Select Examination</option>
+                                <option *ngFor="let exam of educationExaminations" [value]="exam.id">{{ exam.text }}</option>
+                              </select>
+                              <small *ngIf="edu.get('idEducationExamination')?.errors" class="text-danger">
+                                Examination is required.
+                              </small>
+                          </td>
+                           <td>
+                             <select class="form-control form-control-sm" formControlName="idEducationLevel">
+                              <option value="null">Select Education Level</option>
+                              <option *ngFor="let level of educationLevels" [value]="level.id">{{ level.text }}</option>
+                            </select>
+                            <small *ngIf="edu.get('idEducationLevel')?.errors" class="text-danger">
+                              Education Level is required.
+                            </small>
+                          </td>
+                          <td>
+                          <select class="form-control form-control-sm" formControlName="idEducationResult">
+                                <option value="null">Select Result</option>
+                                <option *ngFor="let res of educationResults" [value]="res.id">{{ res.text }}</option>
+                              </select>
+                              <small *ngIf="edu.get('idEducationResult')?.invalid" class="text-danger">
+                                Result is required.
+                              </small>
+
+                          </td>
+                          <td>
+                            <input type="text" class="form-control form-control-sm" formControlName="instituteName">
+                            <small *ngIf="edu.get('instituteName')?.errors" class="text-danger">
+                              Institute Name is required.
+                            </small>
+                          </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" 
+                                      formControlName="isForeignInstitute"
+                                      id="foreignInstitute{{i}}">  
+                                <label class="form-check-label" for="foreignInstitute{{i}}">
+                                  Foreign?
+                                </label>
+                              </div>
+                            </td>
+                             <td>
+                               <input type="text" class="form-control form-control-sm" formControlName="major">
+                              <small *ngIf="edu.get('major')?.errors" class="text-danger">
+                                Major Year is required.
+                              </small>
+                            </td>
+                               <td>
+                                <input type="number" class="form-control form-control-sm" formControlName="cgpa">
+                              </td>
+                               <td>
+                                <input type="number" class="form-control form-control-sm" formControlName="examScale">
+                              </td>
+                                <td>
+                                <input type="number" class="form-control form-control-sm" formControlName="marks">
+                              </td>        
+                            <td>
+                             <input type="number" class="form-control form-control-sm" formControlName="passingYear" min="1">
+                              <small *ngIf="edu.get('passingYear')?.errors" class="text-danger">
+                                Passing Year is required.
+                              </small>
+                            </td>
+                              <td>
+                                <input type="number" class="form-control form-control-sm" formControlName="duration">
+                              </td>
+                               <td>
+                                <input type="text" class="form-control form-control-sm" formControlName="achievement">
+                              </td>
+                              <td>
+                                <button type="button" class="btn btn-sm btn-danger" (click)="removeEducationInfo(i)">
+                                  <i class="bi bi-trash">Remove</i>
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+             </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
