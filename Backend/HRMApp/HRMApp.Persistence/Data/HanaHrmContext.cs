@@ -49,7 +49,7 @@ public partial class HanaHrmContext(DbContextOptions<HanaHrmContext> options, IC
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("con");
             optionsBuilder.UseSqlServer(connectionString);
         }
     }
