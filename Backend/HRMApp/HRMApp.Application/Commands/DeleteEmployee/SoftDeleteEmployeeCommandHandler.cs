@@ -9,15 +9,9 @@ using System.Threading.Tasks;
 
 namespace HRMApp.Application.Commands.DeleteEmployee
 {
-    public class SoftDeleteEmployeeCommandHandler : IRequestHandler<SoftDeleteEmployeeCommand, bool>
+    public class SoftDeleteEmployeeCommandHandler(IEmployeeRepository employeeRepository) : IRequestHandler<SoftDeleteEmployeeCommand, bool>
     {
 
-        private readonly IEmployeeRepository _employeeRepository;
-
-        public SoftDeleteEmployeeCommandHandler(IEmployeeRepository employeeRepository)
-        {
-            _employeeRepository = employeeRepository;
-        }
         public async Task<bool> Handle(SoftDeleteEmployeeCommand request, CancellationToken cancellationToken)
         {
             if (request.Id <= 0)
@@ -25,7 +19,7 @@ namespace HRMApp.Application.Commands.DeleteEmployee
                 return false;
             }
 
-            return await _employeeRepository.SoftDeleteAsync(request.IdClient, request.Id, cancellationToken);
+            return await employeeRepository.SoftDeleteAsync(request.IdClient, request.Id, cancellationToken);
         }
     }
 }

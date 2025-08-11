@@ -10,17 +10,12 @@ using System.Threading.Tasks;
 
 namespace HRMApp.Application.Queries.GetAllEmployee
 {
-    public class GetAllEmployeesQueryHandler : IRequestHandler<GetAllEmployeesQuery, List<EmployeeDTO>>
+    public class GetAllEmployeesQueryHandler(IEmployeeRepository employeeRepository) : IRequestHandler<GetAllEmployeesQuery, List<EmployeeDTO>>
     {
-        private readonly IEmployeeRepository _employeeRepository;
 
-        public GetAllEmployeesQueryHandler(IEmployeeRepository employeeRepository)
-        {
-            _employeeRepository = employeeRepository;
-        }
         public async Task<List<EmployeeDTO>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
-            var employees = await _employeeRepository.GetAllAsync(request.IdClient, cancellationToken);
+            var employees = await employeeRepository.GetAllAsync(request.IdClient, cancellationToken);
             var result = employees.Where(e => e.IdClient == request.IdClient && e.IsActive == true)
                .Select(e => new EmployeeDTO
                {

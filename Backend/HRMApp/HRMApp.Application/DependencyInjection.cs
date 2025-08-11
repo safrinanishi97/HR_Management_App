@@ -19,7 +19,8 @@ namespace HRMApp.Application
         {
             //   services.AddMediatR(cfg =>
             //cfg.RegisterServicesFromAssembly(typeof(CreateEmployeeCommandHandler).Assembly));
-            //services.AddScoped<ICommonService, CommonService>();
+
+            services.AddScoped<ICommonService, CommonService>();
 
             //services.AddMediatR(cfg =>
             //{

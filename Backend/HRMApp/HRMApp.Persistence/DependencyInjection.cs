@@ -13,15 +13,15 @@ namespace HRMApp.Persistence
 {
     public static class DependencyInjection
     {
-        //public static IServiceCollection AddPresistenceDI(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.AddDbContext<HanaHrmContext>(options =>
-        //    options.UseSqlServer(configuration.GetConnectionString("con")));
+        public static IServiceCollection AddPresistenceDI(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<HanaHrmContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("con")));
 
-        //    services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-        //    services.AddScoped<ICommonRepository, CommonRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<ICommonRepository, CommonRepository>();
 
-        //    return services;
-        //}
+            return services;
+        }
     }
 }

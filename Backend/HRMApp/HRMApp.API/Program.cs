@@ -9,18 +9,18 @@ using System.Reflection;
 
 
 var builder = WebApplication.CreateBuilder(args);
-//builder.Services.AddPresistenceDI(builder.Configuration);
+builder.Services.AddPresistenceDI(builder.Configuration);
 builder.Services.AddApplicationDI();
 
-builder.Services.AddDbContext<HanaHrmContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("con"))
-    );
+//builder.Services.AddDbContext<HanaHrmContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("con"))
+//    );
 
 
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+//builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
-builder.Services.AddScoped<ICommonRepository, CommonRepository>();
-builder.Services.AddScoped<ICommonService, CommonService>();
+//builder.Services.AddScoped<ICommonRepository, CommonRepository>();
+//builder.Services.AddScoped<ICommonService, CommonService>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
