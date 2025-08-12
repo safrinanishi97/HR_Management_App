@@ -36,6 +36,13 @@ A full-featured Human Resource Management(HRM) system implemented using **Clean 
 - Lookup APIs for dropdown population (Department, Designation, Gender, etc.)
 - Fully decoupled layers for maintainability and testability
 
+## Screenshots
+---
+![Screenshot](Screenshot/Image1.png)
+![Screenshot](Screenshot/Image2.png)
+![Screenshot](Screenshot/Image3.png)
+![Screenshot](Screenshot/Image4.png)
+
 ---
 
 ## Planned Features (To Be Implemented)
